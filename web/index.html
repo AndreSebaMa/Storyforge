@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Storyforge</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='%23ff66aa'/><circle cx='16' cy='16' r='7' fill='%23fff'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Poppins:wght@300;400;600;700;900&family=Bebas+Neue&family=Playfair+Display:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&family=Zen+Maru+Gothic:wght@400;700;900&family=Quicksand:wght@300;400;600;700&family=Oswald:wght@300;400;600;700&family=Pacifico&family=Dancing+Script:wght@400;700&family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@400;600;700;900&family=Righteous&family=Raleway:wght@300;400;600;700;900&family=M+PLUS+Rounded+1c:wght@300;400;700;900&family=Kaushan+Script&family=Cinzel:wght@400;700;900&display=swap">
+  <link rel="stylesheet" href="/web/css/app.css">
+  <link rel="stylesheet" href="/web/css/pro.css">
+</head>
+<body>
+  <header id="topbar">
+    <div class="brand"><span class="logo"></span>Storyboard<b>Kit</b></div>
+    <div id="modeTabs" class="mode-tabs">
+      <button id="tabStory" class="on">Storyboard</button><button id="tabCreate">Create</button>
+    </div>
+    <button id="btnMap" class="map-btn">
+      <span id="osuDot" class="dot"></span>
+      <span class="map-title">Choose a beatmap…</span><span class="caret">▾</span>
+    </button>
+    <select id="diffSelect" class="diff-pick"></select>
+    <select id="versionSelect" class="diff-pick version-pick hidden"></select>
+    <div class="spacer"></div>
+    <span id="status" class="status"></span>
+    <div id="pillClipboard" class="pill">osu! Ctrl+C</div>
+    <div id="pillTosu" class="pill hidden">tosu</div>
+    <div class="btn-group">
+      <button id="btnUndo" class="icon-btn">↶</button>
+      <button id="btnRedo" class="icon-btn">↷</button>
+    </div>
+    <div class="btn-group">
+      <button id="btnBackups" class="icon-btn">↩</button>
+      <button id="btnFolder" class="icon-btn">📂</button>
+      <button id="btnSettings" class="icon-btn">⚙</button>
+    </div>
+    <button id="btnExport" class="primary-btn hidden">Write<span id="exportDot" class="export-dot hidden"></span></button>
+  </header>
+
+  <main id="main">
+    <aside id="library" class="panel">
+      <div class="panel-head">
+        <h2>Add</h2>
+        <input id="libSearch" type="search" placeholder="Search effects and presets" autocomplete="off">
+      </div>
+      <div id="libList" class="scroll"></div>
+    </aside>
+    <div class="split split-v" data-split="left"></div>
+
+    <section id="center">
+      <div id="banner" class="banner hidden"></div>
+      <div id="stage">
+        <div id="stageCells" class="c-cells"></div>
+        <div id="lasso" class="lasso hidden"></div>
+        <div id="stageWhat" class="stage-what hidden"></div>
+        <div id="stageEmpty" class="stage-empty">
+          <div class="big-logo"></div>
+          <h1>Storyforge</h1>
+          <p>Simple, good-looking osu! storyboards from presets.</p>
+          <button id="btnMap2" class="primary-btn big">Choose a beatmap</button>
+        </div>
+      </div>
+      <div id="transport">
+        <button id="btnPlay" class="play-btn">▶</button>
+        <div class="time"><span id="timeNow">00:00:000</span><span class="dim"> / </span><span id="timeLen" class="dim">00:00:000</span></div>
+        <select id="speed"><option value="1">1×</option><option value="0.75">0.75×</option><option value="0.5">0.5×</option><option value="0.25">0.25×</option></select>
+        <span class="vol">🔊<input id="volume" type="range" min="0" max="1" step="0.05" value="0.6"></span>
+        <div class="spacer"></div>
+        <label class="toggle"><input type="checkbox" id="optLoop"><span>Loop selection</span></label>
+        <label class="toggle"><input type="checkbox" id="optNotes" checked><span>Notes</span></label>
+        <label class="toggle"><input type="checkbox" id="optBg" checked><span>Map BG</span></label>
+        <label class="toggle hidden" id="optExistingWrap"><input type="checkbox" id="optExisting" checked><span>Existing SB</span></label>
+        <label class="toggle"><input type="checkbox" id="optSafe"><span>4:3 frame</span></label>
+        <label class="toggle hidden" id="optFollowWrap"><input type="checkbox" id="optFollow"><span>Follow osu!</span></label>
+      </div>
+    </section>
+
+    <div class="split split-v" data-split="right"></div>
+    <aside id="right" class="panel">
+      <div class="panel-head">
+        <h2>On this map <span id="cCount" class="c-count"></span></h2>
+        <span id="projStats" class="dim small"></span>
+      </div>
+      <div id="cFxList" class="scroll"></div>
+    </aside>
+  </main>
+
+  <div class="split split-h" data-split="bottom"></div>
+  <footer id="bottom">
+    <div id="selbar">
+      <span class="sel-label">Selection</span>
+      <div class="time-pair">
+        <input id="selStart" class="time-input" placeholder="start">
+        <button id="btnSelStart" class="pin-btn">⌖</button>
+      </div>
+      <span class="dim">→</span>
+      <div class="time-pair">
+        <input id="selEnd" class="time-input" placeholder="end">
+        <button id="btnSelEnd" class="pin-btn">⌖</button>
+      </div>
+      <button id="btnSelOsu" class="mini-btn hidden">osu! time</button>
+      <span id="selInfo" class="sel-info"></span>
+      <button id="btnSelKeep" class="keep-btn hidden">＋ Keep as pattern</button>
+      <button id="btnSelClear" class="mini-btn hidden">✕</button>
+      <div id="selChips" class="chips sel-chips"></div>
+      <div class="spacer"></div>
+      <label class="toggle small"><input type="checkbox" id="optAccum"><span>Ctrl+C in osu! adds to the selection</span></label>
+      <label class="small dim">Snap <select id="snapSel"><option value="0">off</option><option value="1">1/1</option><option value="2">1/2</option><option value="3">1/3</option><option value="4" selected>1/4</option><option value="5">1/5</option><option value="6">1/6</option><option value="7">1/7</option><option value="8">1/8</option><option value="9">1/9</option><option value="12">1/12</option><option value="16">1/16</option></select></label>
+      <button id="btnFit" class="mini-btn">Fit</button>
+      <button id="btnKeys" class="mini-btn keys-btn">? Keys</button>
+    </div>
+    <canvas id="timeline"></canvas>
+  </footer>
+
+  <div id="modalRoot"></div>
+  <div id="toasts"></div>
+  <audio id="audio" preload="auto"></audio>
+  <script type="module" src="/web/js/main.js"></script>
+</body>
+</html>
