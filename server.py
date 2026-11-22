@@ -1126,8 +1126,8 @@ def tosu_loop():
 
 SONGS_INDEX = desktop.SongsIndex()
 
-# Who made each map: read from the name of its .osu files ("Artist - Title (Mapper) [Diff].osu"), in the background.
-MAP_INFO: dict[str, tuple[float, str, str]] = {}  # folder -> (folder mtime, mapper, "artist - title" as the files say it)
+# The mapper of each map, read from its .osu file names.
+MAP_INFO: dict[str, tuple[float, str, str]] = {}
 MAP_INFO_ROOT = {"root": None}
 OSU_NAME = re.compile(r"^(.*) \(([^()]*)\) \[.*\]\.osu$", re.I)
 
@@ -1177,7 +1177,7 @@ def map_info_loop():
                             folders.append((e.stat().st_mtime, e.name))
                     except OSError:
                         pass
-            folders.sort(reverse=True)  # the newest first: those are the ones the list shows
+            folders.sort(reverse=True)
             changed = 0
             for mtime, name in folders:
                 have = MAP_INFO.get(name)

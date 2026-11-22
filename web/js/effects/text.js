@@ -136,8 +136,8 @@ export const lyrics = {
     easing('outEase', 'Easing', E.InCubic, 'Exit'),
   ],
   presets: [
+    { name: 'Plain', values: { mode: 'line', inAnim: 'fade', outAnim: 'fade', glow: false, shadow: true, inDur: 300, outDur: 300 } },
     { name: 'Letter rise', values: {} },
-    { name: 'Clean fade', values: { mode: 'line', inAnim: 'fade', outAnim: 'fade', glow: false, shadow: true, inDur: 300, outDur: 300 } },
     { name: 'Typewriter', values: { font: 'Consolas', weight: '400', inAnim: 'typewriter', stagger: 55, outAnim: 'fade', glow: true, shadow: false, glowColor: '#66ccff', glowOpacity: 0.5 } },
     { name: 'Bouncy pop', values: { inAnim: 'pop', inDur: 500, stagger: 35, inEase: E.OutBack, outAnim: 'shrink', outEase: E.InBack, weight: '700' } },
     { name: 'Sing-along', values: { reveal: 'sung', inAnim: 'rise', inDur: 260, distance: 10, idle: 'singpop', idleAmp: 6 } },

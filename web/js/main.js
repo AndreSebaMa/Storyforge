@@ -300,7 +300,7 @@ async function genAll() {
   await Promise.all(S.project.instances.map((i) => generate(i)));
   rebuildScene(); updateCFx(); renderStats();
 }
-// A storyboard made with the app on another PC has no project here: it is shown like any other existing storyboard.
+// A storyboard made on another PC has no project here: shown as existing.
 const wroteHere = () => !!(S.project.exportedHash || S.mapset?.touched);
 const ownInMap = () => S.project.instances.length > 0 && wroteHere();
 const sbRead = () => (SB_READ || (ownInMap() ? undefined : { skipPrefix: '\u0000' }));
@@ -2252,7 +2252,7 @@ async function openLyricFinder() {
   const md = S.map.metadata;
   const box = el('div', { class: 'c-lt' });
   const style = el('select', {}, ...EFFECT_MAP.lyrics.presets.map((p) => el('option', { value: p.name }, p.name)));
-  style.value = S.prefs.lyricStyle || 'Letter rise';
+  style.value = S.prefs.lyricLook || 'Plain';
   let results = [], pick = null, entries = [], shift = 0;
   const m = modal('Find lyrics', box, [], { onClose: () => { C.lyric = null; } });
   const firstSung = () => entries.find((e) => e.text);
@@ -2275,18 +2275,15 @@ async function openLyricFinder() {
         el('span', { class: 'grow' }, f ? `First line at ${fmtTime(f.time + shift).slice(0, 9)}` : 'No timed lines'),
         el('button', { class: 'mini-btn', onclick: (e) => { shift -= e.shiftKey ? 1000 : 100; draw(); } }, '−'),
         el('button', { class: 'mini-btn', onclick: (e) => { shift += e.shiftKey ? 1000 : 100; draw(); } }, '+')),
-      el('div', { class: 'c-lt-how' }, 'Line it up: in osu! select the first sung note → ', el('span', { class: 'kbd' }, 'Ctrl+C')),
       el('div', { class: 'c-lf-lines' }, ...lines.slice(0, 40).map((l) => el('div', {}, el('span', { class: 'dim' }, fmtShort(l.start) + '  '), l.text))),
       el('div', { class: 'c-lt-row' }, el('span', { class: 'dim' }, 'Style'), style, el('div', { class: 'spacer' }),
         el('button', { class: 'primary-btn', disabled: !lines.length, onclick: () => {
-          S.prefs.lyricStyle = style.value; savePrefs();
+          S.prefs.lyricLook = style.value; savePrefs();
           m.close();
           addLyricLines(lines, null, style.value);
           C.openInst = null; C.lyricsOpen = true; renderCFx();
         } }, lost ? `Add ${lines.length} of ${sung} lines` : `Add ${lines.length} lines`)),
-      lost ? el('div', { class: 'warn-text' }, `${lost} line${lost > 1 ? 's are' : ' is'} left out: ${late ? `${late} after the end of this map` : ''}${late && lost - late ? ', ' : ''}${lost - late ? `${lost - late} before its start` : ''}. `
-        + (shift ? 'Fine for a cut version; otherwise check the first line.' : 'If the map cuts the intro, line it up first (Ctrl+C on the first sung note in osu!).')) : null,
-      el('div', { class: 'dim small' }, 'Cut / TV-size maps skip parts of the song: delete the lines that aren\'t in it.'));
+      lost ? el('div', { class: 'warn-text' }, `${lost} line${lost > 1 ? 's are' : ' is'} left out: ${late ? `${late} after the end of this map` : ''}${late && lost - late ? ', ' : ''}${lost - late ? `${lost - late} before its start` : ''}`) : null);
   };
   C.lyric = { capture(t) { const f = firstSung(); if (!pick || !f) return; shift = t - f.time; draw(); } };
   draw();

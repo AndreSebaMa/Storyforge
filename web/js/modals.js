@@ -105,7 +105,7 @@ export function openLyricTimer(app) {
   const selInst = app.selectedInstance();
   if (selInst && selInst.effect === 'lyrics') styleSel.append(el('option', { value: '__sel' }, `Same style as "${selInst.label}"`));
   for (const p of lyr.presets) styleSel.append(el('option', { value: p.name }, p.name));
-  if (!(selInst && selInst.effect === 'lyrics') && lyr.presets.some((p) => p.name === S.prefs.lyricStyle)) styleSel.value = S.prefs.lyricStyle;
+  if (!(selInst && selInst.effect === 'lyrics') && lyr.presets.some((p) => p.name === S.prefs.lyricLook)) styleSel.value = S.prefs.lyricLook;
   const btnStart = el('button', { class: 'ghost-btn' }, '● Start tapping');
   const btnCreate = el('button', { class: 'primary-btn', disabled: true }, 'Create lyrics');
   const info = el('div', { class: 'lt-help' });
@@ -183,7 +183,7 @@ export function openLyricTimer(app) {
     stop();
     const timed = lines.filter((l) => l.start != null).map((l, i, arr) => ({ text: l.text, start: Math.round(l.start), end: Math.round(l.end ?? (arr[i + 1]?.start ?? l.start + 3000)) }));
     const style = styleSel.value === '__sel' ? structuredClone(selInst.params) : null;
-    if (styleSel.value !== '__sel') { S.prefs.lyricStyle = styleSel.value; app.savePrefs(); }
+    if (styleSel.value !== '__sel') { S.prefs.lyricLook = styleSel.value; app.savePrefs(); }
     app.addLyricLines(timed, style, styleSel.value === '__sel' ? null : styleSel.value);
     if (!blank && timed.length === lines.length) app.setLyricDraft('');
     m.close();
