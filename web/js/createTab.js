@@ -68,13 +68,11 @@ function render() {
   root.replaceChildren(
     el('aside', { class: 'cr-col cr-list' },
       el('div', { class: 'cr-head' }, el('h2', {}, 'Your characters')),
-      el('button', { class: 'primary-btn cr-new', onclick: newCharacter }, '+ New character'),
+      el('button', { class: 'primary-btn cr-new cr-btn', onclick: newCharacter }, '+ New character'),
       el('div', { class: 'cr-scroll' }, ...creations().map((x) => el('button', { class: 'cr-item' + (x.id === cur ? ' on' : ''), onclick: () => { cur = x.id; sel = []; lastClick = null; render(); } },
         el('span', { class: 'cr-item-name' }, x.name), el('span', { class: 'dim small' }, `${x.poses.length} pose${x.poses.length === 1 ? '' : 's'}`))))),
     c ? middle(c) : el('section', { class: 'cr-col cr-mid cr-empty' },
-      el('h1', {}, 'Create'),
-      el('p', { class: 'dim' }, 'Bring in a picture, an animation or a short video of your own, once, and use it on any map: as a character that walks about, as the glow on every note, as floating particles, as a background layer, or in any other effect that shows a shape.'),
-      el('button', { class: 'primary-btn big', onclick: newCharacter }, '+ New character')),
+      el('button', { class: 'primary-btn cr-btn cr-huge', onclick: newCharacter }, '+ New character')),
     c ? right(c) : el('aside', { class: 'cr-col cr-poses' }),
   );
 }
@@ -88,7 +86,7 @@ function newCharacter() {
 function middle(c) {
   const name = el('input', { class: 'cr-name', value: c.name, onchange: () => { c.name = name.value.trim() || 'Picture'; save(c); render(); } });
   let armed = false;
-  const remove = el('button', { class: 'mini-btn danger', onclick: async () => {
+  const remove = el('button', { class: 'mini-btn danger cr-btn', onclick: async () => {
     if (!armed) { armed = true; remove.textContent = 'Click again to remove'; setTimeout(() => { armed = false; remove.textContent = 'Remove'; }, 3000); return; }
     try { await app.api.post('/api/creation', { remove: true, id: c.id }); dropCreation(c.id); changed = true; cur = creations()[0]?.id || null; sel = []; render(); } catch (e) { app.toast(e.message, 'bad'); }
   } }, 'Remove');
@@ -99,13 +97,12 @@ function middle(c) {
   return el('section', { class: 'cr-col cr-mid' },
     el('div', { class: 'cr-head' }, name, el('div', { class: 'spacer' }), c.sources.length ? useControl(c, null) : null, recastControl(c), remove),
     el('div', { class: 'cr-bar' },
-      el('button', { class: 'ghost-btn', onclick: () => importFiles(c) }, 'Bring in pictures…'),
+      el('button', { class: 'ghost-btn cr-btn', onclick: () => importFiles(c) }, 'Bring in pictures…'),
       el('span', { class: 'dim small' }, n ? `${n} frame${n === 1 ? '' : 's'} picked, in the order of the numbers` : ''),
       el('div', { class: 'spacer' }),
       n ? el('button', { class: 'mini-btn', onclick: () => { sel = []; lastClick = null; render(); } }, 'Clear') : null,
-      el('button', { class: 'primary-btn', disabled: !n, onclick: () => newPose(c) }, n ? `Make a pose from ${n === 1 ? 'this frame' : `these ${n} frames`}` : 'Make a pose')),
-    rows,
-    el('div', { class: 'cr-foot dim small' }, 'To use it: "Add to the library as…" above (the whole picture) or on a pose. It then sits among the presets of that effect in the Storyboard tab, ready to be put on any selection. It is also in the picture list of every effect that takes one, under "Your pictures".'));
+      el('button', { class: 'primary-btn cr-btn', disabled: !n, onclick: () => newPose(c) }, n ? `Make a pose from ${n === 1 ? 'this frame' : `these ${n} frames`}` : 'Make a pose')),
+    rows);
 }
 
 function recastControl(c) {
@@ -163,17 +160,18 @@ function sourceRow(c, src) {
     if (!s) { strip.replaceChildren(el('span', { class: 'danger small' }, isVideo(src) ? 'This video could not be read. An .mp4 (H.264) or .webm works best.' : 'This picture could not be read.')); return; }
     row.querySelector('.cr-count').textContent = `${s.frames.length} frame${s.frames.length === 1 ? '' : 's'} · ${s.w}×${s.h}` + (s.frames.length >= MAX_FRAMES ? ` · only the first ${MAX_FRAMES} frames are used` : '');
     strip.replaceChildren(...s.frames.map((f, i) => {
-      const at = sel.findIndex(([a, b]) => a === src && b === i);
-      return el('button', { class: 'cr-frame' + (at >= 0 ? ' on' : ''), onclick: (e) => pick(src, i, e.shiftKey) },
-        thumb(f.canvas, 84), el('span', { class: 'cr-num' }, String(i + 1)), at >= 0 ? el('span', { class: 'cr-order' }, String(at + 1)) : null);
+      const at = sel.map(([a, b], k) => (a === src && b === i ? k + 1 : 0)).filter(Boolean);
+      return el('button', { class: 'cr-frame' + (at.length ? ' on' : ''), onclick: (e) => pick(src, i, e.shiftKey, e.ctrlKey || e.metaKey) },
+        thumb(f.canvas, 84), el('span', { class: 'cr-num' }, String(i + 1)), at.length ? el('span', { class: 'cr-order' }, at.join(' ')) : null);
     }));
   });
   return row;
 }
 
-function pick(src, i, range) {
-  const has = (a, b) => sel.findIndex(([x, y]) => x === a && y === b);
-  if (range && lastClick && lastClick[0] === src && lastClick[1] !== i) {
+function pick(src, i, range, again) {
+  const has = (a, b) => sel.findLastIndex(([x, y]) => x === a && y === b);
+  if (again) sel.push([src, i]);
+  else if (range && lastClick && lastClick[0] === src && lastClick[1] !== i) {
     const step = i > lastClick[1] ? 1 : -1;
     for (let k = lastClick[1] + step; k !== i + step; k += step) if (has(src, k) < 0) sel.push([src, k]);
   } else {
@@ -209,7 +207,6 @@ function newPose(c) {
 
 function right(c) {
   const list = el('div', { class: 'cr-scroll' });
-  if (!c.poses.length) list.append(el('div', { class: 'cr-hint' }, 'A pose is one or more frames with a name: "sitting", "walking", "gets up". Pick frames on the left, then press "Make a pose".'));
   for (const pose of c.poses) list.append(poseCard(c, pose));
   return el('aside', { class: 'cr-col cr-poses' }, el('div', { class: 'cr-head' }, el('h2', {}, 'Poses')), list);
 }

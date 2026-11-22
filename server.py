@@ -25,7 +25,7 @@ import desktop
 
 APP_NAME = "Storyforge"
 OLD_NAMES = ("StoryboardKit",)
-APP_VERSION = "0.1.2"
+APP_VERSION = "0.1.3"
 ASSET_PREFIX = "sb/storyforge/"
 OUR_PREFIXES = (ASSET_PREFIX, "sb/sbkit/")
 MAX_BODY = 512 * 1024 * 1024
