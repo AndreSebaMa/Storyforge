@@ -34,15 +34,15 @@ Once you're happy with your masterpiece, hit ctrl+s or the "write" button at the
 
 ## Storyboards created during the testing phase
 
-https://github.com/user-attachments/assets/4fca0e78-0e0b-4604-99a5-b01abf793be5
+https://github.com/user-attachments/assets/07352445-7b20-4d6e-a755-37eb59d294a7
 
 [Diplo, Sonny Fodera - Turn Back Time](https://osu.ppy.sh/beatmapsets/2569310#osu/5717169), map and storyboard by Kujinn
 
-https://github.com/user-attachments/assets/385a5f84-d29e-440d-88fc-321d1db5e41c
+https://github.com/user-attachments/assets/dbbda0a6-3d37-4f6d-9217-63305c474b33
 
 [-LostFairy- - El'na dia](https://osu.ppy.sh/beatmapsets/2638306#osu/5945169), map by Booliix, storyboard by -Bin
 
-https://github.com/user-attachments/assets/93847a8d-e0b3-482c-b883-7a4d8810a036
+https://github.com/user-attachments/assets/6db870c3-7f87-4da2-9878-c68e4e3c93ed
 
 [POLKADOT STINGRAY - Benikurage](https://osu.ppy.sh/beatmapsets/1901997#osu/3921203), map by Lako, storyboard by -Bin
 
